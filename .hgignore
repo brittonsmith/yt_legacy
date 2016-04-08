@@ -1,0 +1,4 @@
+syntax: glob
+yt_gadget_fof_plus.egg-info/*
+*.pyc
+*~
