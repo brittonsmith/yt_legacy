@@ -18,6 +18,9 @@ API for gadget_fof_plus frontend.
 from .data_structures import \
     GadgetFOFPlusDataset
 
+from .simulation_handling import \
+    GadgetFOFPlusSimulation
+
 from .io import \
     IOHandlerGadgetFOFPlusHaloHDF5
 
