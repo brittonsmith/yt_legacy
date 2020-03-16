@@ -19,4 +19,7 @@ setup(name="yt_legacy",
           "Programming Language :: Python",
           "Topic :: Utilities",
           ],
-      )
+      install_requires=[
+          'yt>=3.5',
+      ],
+)

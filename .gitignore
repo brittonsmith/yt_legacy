@@ -1,4 +1,4 @@
 syntax: glob
-yt_gadget_fof_plus.egg-info/*
+yt_legacy.egg-info/*
 *.pyc
 *~
