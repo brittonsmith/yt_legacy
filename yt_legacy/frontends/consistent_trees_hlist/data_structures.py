@@ -18,6 +18,8 @@ from yt.utilities.cosmology import \
 
 from yt_legacy.frontends.consistent_trees_hlist.fields import \
     ConsistentTreesHListFieldInfo
+from yt_legacy.frontends.consistent_trees_hlist.io import \
+    f_text_block
 
 class CTHLMiniFile(object):
     def __init__(self, ds, filename):
@@ -152,6 +154,7 @@ class CTHLMiniFile(object):
             nsep += buff.count(sep)        
         f.close()
 
+        self.file_size = file_size
         self._data_lines = nsep
 
 class ConsistentTreesHListFile(HaloCatalogFile, CTHLMiniFile):
@@ -160,42 +163,30 @@ class ConsistentTreesHListFile(HaloCatalogFile, CTHLMiniFile):
         CTHLMiniFile.__init__(self, ds, filename)
         HaloCatalogFile.__init__(self,
             ds, io, filename, file_id, frange)
-        # super(ConsistentTreesHListFile, self).__init__(
-        #     ds, io, filename, file_id, frange)
 
-    # def __init__(self, ds, io, filename, file_id):
-    #     with h5py.File(filename, "r") as f:
-    #         self.header = \
-    #           dict((str(field), val)
-    #                for field, val in f["Header"].attrs.items())
-    #         self.group_length_sum = f["Group/GroupLen"][()].sum() \
-    #           if "Group/GroupLen" in f else 0
-    #         self.group_subs_sum = f["Group/GroupNsubs"][()].sum() \
-    #           if "Group/GroupNsubs" in f else 0
-    #     self.total_ids = self.header["Nids_ThisFile"]
-    #     self.total_particles = \
-    #       {"Group": self.header["Ngroups_ThisFile"],
-    #        "Subhalo": self.header["Nsubgroups_ThisFile"]}
-    #     self.total_offset = 0
-    #     super(GadgetFOFHDF5File, self).__init__(ds, io, filename, file_id)
+    def _read_fields(self, rfields):
+        if not rfields:
+            return {}
 
-    # def _read_particle_positions(self, ptype, f=None):
-    #     """
-    #     Read all particle positions in this file.
-    #     """
+        fi = self.field_info
+        field_data = dict((field, np.empty(self.total_particles['halos']))
+                          for field in rfields)
 
-    #     if f is None:
-    #         close = True
-    #         f = h5py.File(self.filename, "r")
-    #     else:
-    #         close = False
+        f = open(self.filename, 'r')
+        f.seek(self._hoffset)
+        for i, (line, offset) in enumerate(
+                f_text_block(f, file_size=self.file_size)):
+            sline = line.split()
+            for field in rfields:
+                field_data[field][i] = float(sline[fi[field]["column"]])
+        f.close()
 
-    #     pos = f[ptype]["%sPos" % ptype][()].astype("float64")
+        return field_data
 
-    #     if close:
-    #         f.close()
-
-    #     return pos
+    def _read_particle_positions(self, ptype, f=None):
+        field_data = self._read_fields(['x', 'y', 'z'])
+        pos = np.vstack([field_data[f] for f in 'xyz']).T
+        return pos
 
 class ConsistentTreesHListIndex(ParticleIndex):
     def _setup_filenames(self):
