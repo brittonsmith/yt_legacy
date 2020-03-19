@@ -49,11 +49,50 @@ class IOHandlerConsistentTreesHList(BaseIOHandler):
 
     def _identify_fields(self, data_file):
         fi = data_file.field_info
-        units = dict([(field, fi[field].get('units', ''))
+        units = dict([(('halos', field), fi[field].get('units', ''))
                       for field in fi])
         fields = [('halos', field)
                   for field in data_file.field_list]
         return fields, units
+
+    def _read_fluid_selection(self, chunks, selector, fields, size):
+        raise NotImplementedError
+
+    def _read_particle_coords(self, chunks, ptf):
+        # This will read chunks and yield the results.
+        chunks = list(chunks)
+        data_files = set([])
+        ptype = 'halos'
+        for chunk in chunks:
+            for obj in chunk.objs:
+                data_files.update(obj.data_files)
+
+        for data_file in sorted(data_files, key=lambda x: (x.filename, x.start)):
+            pos = data_file._get_particle_positions(ptype)
+            x, y, z = \
+              (self.ds.arr(pos[:, i], data_file.field_info[field].get('units', ''))
+               for i, field in enumerate('xyz'))
+            yield "halos", (x, y, z)
+
+    def _read_particle_fields(self, chunks, ptf, selector):
+        # Now we have all the sizes, and we can allocate
+        chunks = list(chunks)
+        data_files = set([])
+        for chunk in chunks:
+            for obj in chunk.objs:
+                data_files.update(obj.data_files)
+
+        for data_file in sorted(data_files, key=lambda x: (x.filename, x.start)):
+            for ptype, field_list in sorted(ptf.items()):
+                rfields = field_list + [f for f in 'xyz' if f not in field_list]
+                field_data = data_file._read_fields(rfields)
+                fi = data_file.field_info
+                x, y, z = (self.ds.arr(field_data[field], fi[field].get('units', ''))
+                           for field in 'xyz')
+                mask = selector.select_points(x, y, z, 0.0)
+                if mask is None: continue
+                for field in field_list:
+                    yield (ptype, field), field_data[field]
 
     def _yield_coordinates(self, data_file):
         pos = data_file._get_particle_positions('halos')
