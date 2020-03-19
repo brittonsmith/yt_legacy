@@ -70,6 +70,10 @@ class CTHLMiniFile(object):
                                          "hubble_constant"]):
                     v = float(pars[j].split(" = ")[1])
                     self.parameters[par] = v
+                self.ds._arr = None
+                self.ds._quan = None
+                self.ds.unit_registry.modify(
+                    "h", self.parameters['hubble_constant'])
 
             # box size
             elif "Full box size" in line:
