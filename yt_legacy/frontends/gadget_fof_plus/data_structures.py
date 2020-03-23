@@ -34,9 +34,6 @@ class GadgetFOFPlusDataset(GadgetFOFDataset):
     _file_class = GadgetFOFHDF5File
     _field_info_class = GadgetFOFFieldInfo
 
-    def __init__(self, filename, dataset_type="gadget_fof_hdf5", **kwargs):
-        super(GadgetFOFPlusDataset, self).__init__(filename, dataset_type, **kwargs)
-
     _instantiated_halo_ds = None
     @property
     def _halos_ds(self):
@@ -65,9 +62,5 @@ class GadgetFOFPlusHaloDataset(GadgetFOFHaloDataset):
     _field_info_class = GadgetFOFPlusHaloFieldInfo
 
     def __init__(self, ds, dataset_type="gadget_fof_plus_halo_hdf5"):
-        self.real_ds = ds
-        self.particle_types_raw = self.real_ds.particle_types_raw
-        self.particle_types = self.particle_types_raw
-
-        super(GadgetFOFHaloDataset, self).__init__(
-            self.real_ds.parameter_filename, dataset_type)
+        super(GadgetFOFPlusHaloDataset, self).__init__(
+            ds, dataset_type)
