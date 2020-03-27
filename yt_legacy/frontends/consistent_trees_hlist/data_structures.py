@@ -48,9 +48,11 @@ class CTHLMiniFile(object):
         for pf in rfl:
             match = reg.search(pf)
             if match is None:
-                fields.append(pf)
+                field_name = pf
             else:
-                fields.append(pf[:match.start()])
+                field_name = pf[:match.start()]
+            field_name = field_name.replace('/', '_')
+            fields.append(field_name)
 
         # Now grab a bunch of things from the header.
         while True:
