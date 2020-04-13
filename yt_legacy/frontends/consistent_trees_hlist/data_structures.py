@@ -62,6 +62,7 @@ class CTHLMiniFile(object):
                     "Encountered enexpected EOF reading %s." %
                     self.filename)
             elif not line.startswith("#"):
+                self._hoffset = f.tell() - len(line)
                 break
 
             # cosmological parameters
@@ -117,7 +118,6 @@ class CTHLMiniFile(object):
                     fdb[tfield.lower()] = {"description": desc.strip(),
                                            "units": punits}
 
-        self._hoffset = f.tell()
         f.close()
 
         # Fill the field info with the units found above.
