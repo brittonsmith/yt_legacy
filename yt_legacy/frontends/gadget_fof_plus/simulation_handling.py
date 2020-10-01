@@ -19,7 +19,7 @@ import os
 
 from yt.frontends.gadget.simulation_handling import \
     GadgetSimulation
-from yt.convenience import \
+from yt.loaders import \
     load
 from yt.funcs import \
     only_on_root

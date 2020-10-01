@@ -3,8 +3,9 @@ import re
 import stat
 import os
 
-from yt.data_objects.data_containers import \
+from unyt.exceptions import \
     UnitParseError
+
 from yt.data_objects.static_output import \
     Dataset
 from yt.frontends.halo_catalog.data_structures import \
