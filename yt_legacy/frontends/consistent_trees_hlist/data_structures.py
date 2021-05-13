@@ -201,8 +201,6 @@ class ConsistentTreesHListIndex(ParticleIndex):
         self.data_files = \
           [cls(self.dataset, self.io,
                self.dataset.parameter_filename, 0, None)]
-        self.total_particles = sum(
-            sum(d.total_particles.values()) for d in self.data_files)
 
 class ConsistentTreesHListDataset(Dataset):
     _index_class = ConsistentTreesHListIndex
@@ -214,7 +212,7 @@ class ConsistentTreesHListDataset(Dataset):
 
     def _parse_parameter_file(self):
         self.dimensionality = 3
-        self.periodicity = (True, True, True)
+        self._periodicity = (True, True, True)
         self.refine_by = 2
         self.unique_identifier = \
             int(os.stat(self.parameter_filename)[stat.ST_CTIME])
