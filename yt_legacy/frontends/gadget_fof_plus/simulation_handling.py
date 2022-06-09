@@ -24,7 +24,7 @@ from yt.loaders import \
 from yt.funcs import \
     only_on_root
 from yt.utilities.exceptions import \
-    YTOutputNotIdentified
+    YTUnidentifiedDataType
 from yt.utilities.logger import ytLogger as \
     mylog
 from yt.utilities.parallel_tools.parallel_analysis_interface import \
@@ -129,7 +129,7 @@ class GadgetFOFPlusSimulation(GadgetSimulation):
                                              "time": ds.current_time.in_units("s")}
                         if ds.cosmological_simulation:
                             my_storage.result["redshift"] = ds.current_redshift
-                except YTOutputNotIdentified:
+                except YTUnidentifiedDataType:
                     mylog.error("Failed to load %s", output)
         mylog.setLevel(llevel)
         my_outputs = [my_output for my_output in my_outputs.values() \
