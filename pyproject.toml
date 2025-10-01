@@ -1,0 +1,65 @@
+[build-system]
+requires = [
+  "setuptools>=77.0.0",
+  "setuptools_scm[toml]>=7.0.1",
+]
+
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "yt_legacy"
+description = "A yt extension for the Legacy project."
+authors = [
+    { name = "Britton Smith", email = "brittonsmith@gmail.com" },
+]
+license = "BSD-3-Clause"
+license-files = ["LICENSE"]
+readme = "README.md"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Intended Audience :: Science/Research",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Unix",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "yt>=4.2",
+]
+dynamic = [
+    "version",
+]
+
+[project.urls]
+Homepage = "https://github.com/brittonsmith/yt_legacy"
+Repository = "https://github.com/brittonsmith/yt_legacy"
+Issues = "https://github.com/brittonsmith/yt_legacy/issues"
+
+[tool.ruff.lint]
+# By default, Ruff enables Flake8's F rules, along with a subset of the E rules,
+# omitting any stylistic rules that overlap with the use of a formatter, like
+# ruff format
+select = ["E4", "E7", "E9", "F"]
+exclude = [
+    "*/__init__.py"
+]
+
+[tool.setuptools]
+include-package-data = true
+zip-safe = false
+
+[tool.setuptools.packages.find]
+include = [
+    "yt_legacy",
+]
+
+[tool.setuptools.dynamic]
+version = {attr = "yt_legacy.__version__"}
